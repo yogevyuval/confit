@@ -6,7 +6,7 @@ setup(
     packages=find_packages(),
     entry_points={
         'console_scripts': [
-            'run_confit = confit.main:generate_config',
+            'confit = confit.main:generate_config',
         ]
     }
 )
