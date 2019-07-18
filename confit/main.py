@@ -23,7 +23,7 @@ class Vars:
 
     def __getitem__(self, item):
         if item not in self._vars:
-            raise VarKeyNotFound(f'Could not find {item} in {self._vars}')
+            raise VarKeyNotFound('Could not find {0} in {1}'.format(item, self._vars))
 
         return self._vars[item]
 
@@ -37,7 +37,7 @@ def generate_config(region, prefix, input_template, output):
     ssm = SsmBackend(region)
 
     if not os.path.exists(input_template):
-        raise TemplateNotFoundException(f'Template {input_template} not found')
+        raise TemplateNotFoundException('Template {} not found'.format(input_template))
 
     result = render_params(input_template.read(), prefix, ssm)
     print(result)
