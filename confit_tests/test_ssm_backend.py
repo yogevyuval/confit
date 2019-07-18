@@ -1,6 +1,6 @@
 import pytest
 
-from confit.backends.ssm import Param, SsmBackend
+from confit.backends.ssm import Param, SsmBackend, parse_aws_response
 from confit.main import build_vars
 
 
@@ -24,4 +24,5 @@ def stub_response():
 
 
 def test_get_parameters():
-    pass
+    result = parse_aws_response(stub_response())
+    assert result == [Param('/production/list/param1', 'param1'), Param('/production/list/param2', 'param2'), Param('/dev/list/param1', 'devparam1')]

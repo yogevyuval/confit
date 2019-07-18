@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict
 
 import boto3
 
@@ -10,6 +10,13 @@ class Param:
         self.name = name
         self.value = value
 
+    def __eq__(self, other):
+        return self.name == other.name and self.value == other.value
+
+
+def parse_aws_response(response: Dict):
+    return list(map(lambda p: Param(p['Name'], p['Value']), response['Parameters']))
+
 
 class SsmBackend:
     def __init__(self, region):
@@ -20,5 +27,4 @@ class SsmBackend:
         return self.client.get_parameters_by_path(Path=PATH_SEP, Recursive=True, WithDecryption=True)
 
     def get_parameters(self) -> List[Param]:
-        aws_params = self.request()
-        return aws_params['Parameters'].map(lambda p: Param(p['Name'], p['Value']))
+        return parse_aws_response(self.request())

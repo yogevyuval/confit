@@ -34,7 +34,7 @@ class Vars:
 @click.option('--prefix', default='', help='prefix to create prefixed_vars')
 @click.option('--input-template', '-i', required=True, help='Path to your template')
 @click.option('--output', '-o', help='Output path')
-def generate_config(region: str, prefix: str, input_template: str, output: str) -> object:
+def generate_config(region: str, prefix: str, input_template: str, output: str):
 
     if not os.path.exists(input_template):
         raise TemplateNotFoundException('Template {} not found'.format(input_template))
