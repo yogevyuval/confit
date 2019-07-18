@@ -9,9 +9,12 @@ confit --region us-east-1 -i config.jinja -o output.yaml
 ```
 
 # Template
-`confit` uses the [jinja2](http://jinja.pocoo.org/docs/2.10/) templating language. Parameters are available in the template through
-the `vars` variable. You can use `vars.get('/parameter/param1/')`, or `vars.get('/parameter/param1/', 'default')` to have a default.
-access through `vars.['/parameter/param1/']` is also supported. 
+`confit` uses the [jinja2](http://jinja.pocoo.org/docs/2.10/) templating language.
+
+ֿParameters are available in the template through the `vars` variable.
+
+You can use `{{ vars.get('/parameter/param1/') }}`, or `{{ vars.get('/parameter/param1/' }}, 'default')` to have a default.
+Access through `{{ vars['/parameter/param1/'] }} ` is also supported. 
 
 
 # Prefix
