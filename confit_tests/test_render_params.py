@@ -38,11 +38,6 @@ def test_unknown_var_get():
     assert results == ''
 
 
-def test_empty_prefix():
-    results = render_params("{{vars.get('/some/var')}}", '', SsmStub())
-    assert results == 'testing!'
-
-
 def test_empty_prefix_prefixed_vars():
     results = render_params("{{prefixed_vars.get('/some/var')}}", '', SsmStub())
     assert results == 'testing!'
