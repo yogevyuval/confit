@@ -1,9 +1,10 @@
 import os
+from typing import Dict, List
 
 import click
 from jinja2 import Template
 
-from confit.backends.ssm import SsmBackend
+from confit.backends.ssm import SsmBackend, Param
 
 
 class TemplateNotFoundException(Exception):
@@ -33,13 +34,17 @@ class Vars:
 @click.option('--prefix', default='', help='prefix to create prefixed_vars')
 @click.option('--input-template', '-i', required=True, help='Path to your template')
 @click.option('--output', '-o', help='Output path')
-def generate_config(region, prefix, input_template, output):
-    ssm = SsmBackend(region)
+def generate_config(region: str, prefix: str, input_template: str, output: str) -> object:
 
     if not os.path.exists(input_template):
         raise TemplateNotFoundException('Template {} not found'.format(input_template))
 
-    result = render_params(input_template.read(), prefix, ssm)
+    ssm = SsmBackend(region)
+    parameters: List[Param] = ssm.get_parameters()
+
+    vars, prefixed_vars = build_vars(parameters, prefix)
+
+    result = render_params(open(input_template).read(), vars, prefixed_vars)
     print(result)
 
     if output:
@@ -47,9 +52,19 @@ def generate_config(region, prefix, input_template, output):
             f.write(result)
 
 
-def render_params(input_template, prefix, ssm):
-    vars, prefixed_vars = ssm.get_parameters(prefix)
+def build_vars(parameters: List[Param], prefix: str):
+    vars = {}
+    prefixed_vars = {}
 
+    for p in parameters:
+        vars[p.name] = p.value
+        if p.name.startswith(prefix):
+            prefixed_vars[p.name.replace(prefix, '')] = p.value
+
+    return vars, prefixed_vars
+
+
+def render_params(input_template: str, vars: Dict[str, str], prefixed_vars: Dict[str, str]) -> str:
     tm = Template(input_template)
     result = tm.render(vars=Vars(vars), prefixed_vars=Vars(prefixed_vars))
     return result
